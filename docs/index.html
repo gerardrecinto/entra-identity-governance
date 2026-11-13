@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>entra-identity-governance | Strict identity checks for Microsoft Entra ID</title>
+<meta name="description" content="OIDC and SAML validation, Conditional Access lint, PIM audit, lifecycle planning, CyberArk onboarding and Graph PowerShell for Microsoft Entra ID.">
+<link rel="canonical" href="https://gerardrecinto.github.io/entra-identity-governance/"><link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="theme-color" content="#0a0f1c">
+<meta property="og:type" content="website"><meta property="og:title" content="entra-identity-governance | Strict identity checks for Microsoft Entra ID"><meta property="og:description" content="OIDC and SAML validation, Conditional Access lint, PIM audit, lifecycle planning, CyberArk onboarding and Graph PowerShell for Microsoft Entra ID."><meta property="og:url" content="https://gerardrecinto.github.io/entra-identity-governance/">
+<meta name="twitter:card" content="summary"><meta name="twitter:title" content="entra-identity-governance | Strict identity checks for Microsoft Entra ID"><meta name="twitter:description" content="OIDC and SAML validation, Conditional Access lint, PIM audit, lifecycle planning, CyberArk onboarding and Graph PowerShell for Microsoft Entra ID.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f7f9fc;--surface:#fff;--border:#d8dfeb;--fg:#0f172a;--muted:#475569;--acc:#059669;--acc-fg:#fff;--risk:#b45309;--code:#0b1220;--code-fg:#dbe4f5}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0a0f1c;--surface:#111a2e;--border:#22304e;--fg:#e8edf7;--muted:#9aa8c2;--acc:#34d399;--acc-fg:#04130d;--risk:#fbbf24;--code:#070b15;--code-fg:#dbe4f5}}
+:root[data-theme=dark]{--bg:#0a0f1c;--surface:#111a2e;--border:#22304e;--fg:#e8edf7;--muted:#9aa8c2;--acc:#34d399;--acc-fg:#04130d;--risk:#fbbf24;--code:#070b15;--code-fg:#dbe4f5}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 17px/1.6 Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+.mono,code,pre{font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace}
+a{color:var(--acc)}a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--acc);outline-offset:3px;border-radius:6px}
+.skip{position:absolute;left:-999px;top:8px;background:var(--acc);color:var(--acc-fg);padding:8px 12px;border-radius:8px;z-index:20}.skip:focus{left:8px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+header{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 80%,transparent);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--border)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:56px;gap:12px}
+.brand{font:600 14px 'JetBrains Mono',monospace;color:var(--fg);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+nav{display:flex;gap:4px;font:500 13px 'JetBrains Mono',monospace}nav a{color:var(--muted);text-decoration:none;padding:8px 10px;border-radius:8px}nav a:hover{color:var(--fg);background:var(--surface)}
+@media(max-width:640px){nav a.opt{display:none}}
+.hero{padding-top:72px;padding-bottom:40px}.eyebrow{font:500 13px 'JetBrains Mono',monospace;color:var(--acc);letter-spacing:.04em;text-transform:uppercase;margin:0 0 16px}
+h1{font-size:clamp(2.2rem,6vw,4rem);line-height:1.08;letter-spacing:-.03em;font-weight:800;margin:0 0 20px;max-width:16em}
+.sub{font-size:1.15rem;color:var(--muted);max-width:42em;margin:0 0 28px}
+.btns{display:flex;gap:12px;flex-wrap:wrap}.btn{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border-radius:10px;font:600 15px Inter,sans-serif;text-decoration:none;border:1px solid var(--border);color:var(--fg);background:var(--surface)}
+.btn.p{background:var(--acc);color:var(--acc-fg);border-color:var(--acc)}.btn:hover{filter:brightness(1.06)}
+.term{margin:36px 0 0;background:var(--code);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.term .bar{display:flex;justify-content:space-between;gap:12px;padding:10px 16px;border-bottom:1px solid #1c2740;font:500 12px 'JetBrains Mono',monospace;color:#8da0c4}
+.term pre{margin:0;padding:16px;overflow-x:auto;color:var(--code-fg);font-size:13.5px;line-height:1.65}
+.term .ok{color:#34d399}.term .bad{color:#fbbf24}.term .dim{color:#7f8fb0}
+section{padding:56px 0;border-top:1px solid var(--border)}
+h2{font-size:clamp(1.5rem,3.4vw,2.1rem);line-height:1.2;letter-spacing:-.02em;font-weight:800;margin:0 0 12px;max-width:24em}
+.lead{color:var(--muted);max-width:42em;margin:0 0 28px}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px}.card h3{margin:0 0 6px;font-size:1.02rem}.card p{margin:0;color:var(--muted);font-size:.95rem}.card .f{display:block;margin-top:10px;font:500 12px 'JetBrains Mono',monospace;color:var(--acc);overflow-wrap:anywhere}
+.cmd{position:relative}.cmd pre{margin:0;padding:18px 70px 18px 18px;background:var(--code);color:var(--code-fg);border:1px solid var(--border);border-radius:14px;overflow-x:auto;font-size:13.5px;line-height:1.7}
+.copy{position:absolute;top:10px;right:10px;min-height:36px;padding:0 12px;border-radius:8px;border:1px solid #2a3858;background:#111a2e;color:#cbd6ee;font:600 12px 'JetBrains Mono',monospace;cursor:pointer}
+.two{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.box{border-radius:14px;padding:22px;border:1px solid var(--border);background:var(--surface)}.box h3{margin:0 0 10px;font:600 13px 'JetBrains Mono',monospace;letter-spacing:.04em;text-transform:uppercase}
+.box.g h3{color:var(--acc)}.box.a h3{color:var(--risk)}.box ul{margin:0;padding-left:18px;color:var(--muted);font-size:.95rem}.box li{margin:6px 0}
+details{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:0 18px;margin:10px 0}summary{cursor:pointer;padding:16px 0;font-weight:600;list-style:none}summary::-webkit-details-marker{display:none}summary::after{content:'+';float:right;color:var(--acc);font-family:'JetBrains Mono',monospace}details[open] summary::after{content:'-'}details p{margin:0 0 16px;color:var(--muted)}
+footer{padding:40px 0 56px;border-top:1px solid var(--border);color:var(--muted);font-size:.9rem}footer .wrap{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header><div class="wrap"><a class="brand" href="./">entra-identity-governance</a>
+<nav aria-label="Main"><a class="opt" href="#what">What it does</a><a class="opt" href="#run">Run it</a><a href="#real">Real vs not</a><a href="https://github.com/gerardrecinto/entra-identity-governance">GitHub</a></nav></div></header>
+<main id="main">
+<div class="wrap hero">
+<p class="eyebrow">Entra ID, OIDC, PIM, Conditional Access</p>
+<h1>Validate tokens strictly, and find standing admins before an attacker does.</h1>
+<p class="sub">Authorization code flow with PKCE and strict ID token validation, SAML condition checks, a Conditional Access linter, a PIM audit, a joiner mover leaver planner, and CyberArk onboarding.</p>
+<div class="btns"><a class="btn p" href="#run">Run it in a minute</a><a class="btn" href="https://github.com/gerardrecinto/entra-identity-governance">View on GitHub</a></div>
+<div class="term" role="figure" aria-label="Real output from the repo"><div class="bar"><span>python -m pytest -q tests</span><span>real output, captured Nov 13, 2026</span></div><pre><span class="dim">$ python -m pytest -q tests</span>
+17 passed in 1.61s</pre></div>
+</div>
+<section id="what"><div class="wrap"><h2>The checks teams skip, written as tests.</h2><p class="lead">Each check rejects a specific bad input, and the test names it.</p><div class="grid"><div class="card"><h3>OIDC and PKCE</h3><p>RS256 only. Rejects wrong issuer, audience, nonce, tenant, expired tokens, alg none and HS256. PKCE matches the RFC 7636 test vector.</p><span class="f">identity/oidc.py</span></div><div class="card"><h3>SAML conditions</h3><p>Issuer, audience and time window, parsed with defusedxml so a DTD attack is refused.</p><span class="f">identity/saml.py</span></div><div class="card"><h3>Conditional Access lint</h3><p>MFA for admin roles, legacy auth blocked, break-glass excluded. A report-only policy is not counted as enforced.</p><span class="f">identity/ca_lint.py</span></div><div class="card"><h3>PIM audit</h3><p>Reads Graph role schedules and flags permanent Global Admin, Privileged Role Admin and Security Admin assignments.</p><span class="f">identity/pim_audit.py</span></div><div class="card"><h3>Lifecycle plan</h3><p>Compares the HR feed with Entra and returns create, move, disable, enable and review. It never deletes.</p><span class="f">identity/lifecycle.py</span></div><div class="card"><h3>CyberArk and PowerShell</h3><p>PVWA logon and account onboarding with rotation on, plus Graph PowerShell for standing admins, a report-only MFA policy and stale guests.</p><span class="f">identity/cyberark.py, powershell/</span></div></div></div></section>
+<section id="run"><div class="wrap"><h2>Run it from a clean checkout.</h2><p class="lead">Python 3 is enough. The tests use local stub servers, so no tenant is needed.</p>
+<div class="cmd"><pre id="cmd">git clone https://github.com/gerardrecinto/entra-identity-governance
+cd entra-identity-governance
+pip install -r requirements.txt
+python -m pytest -q tests</pre><button class="copy" data-for="cmd" type="button">Copy</button></div></div></section>
+<section id="real"><div class="wrap"><h2>What is real, and what is not verified.</h2><p class="lead">Every claim on this page comes from a command that ran. Anything that did not run is listed on the right.</p>
+<div class="two"><div class="box g"><h3>Verified</h3><ul><li>17 tests pass, including the RFC 7636 PKCE vector, wrong audience, issuer, nonce and tenant, expired, alg none, HS256, and a SAML DTD attack.</li><li>Conditional Access gaps, the lifecycle plan, PIM filtering, Graph paging and the CyberArk calls run against local stubs. terraform fmt is clean.</li></ul></div><div class="box a"><h3>Not verified</h3><ul><li>Nothing ran against a real Entra tenant, Graph or CyberArk.</li><li>The PowerShell scripts were not run, and terraform validate was not run.</li><li>SAML signature verification is not implemented. Verify the signature first, then run these checks.</li><li>Entra ID Governance access packages are not covered.</li></ul></div></div></div></section>
+<section id="faq"><div class="wrap"><h2>Questions before you try it.</h2><details><summary>Why only RS256?</summary><p>Accepting the algorithm named in the token header is how alg none and HS256 confusion attacks work. The validator fixes the algorithm in code.</p></details><details><summary>Why start Conditional Access in report-only?</summary><p>It shows who would be blocked before anyone is. Both Terraform policies start report-only on purpose.</p></details><details><summary>Does the lifecycle planner delete accounts?</summary><p>No. A leaver is disabled and reviewed. Deletion is left to Entra&#x27;s recycle bin.</p></details></div></section>
+</main>
+<footer><div class="wrap"><span>Built by <a href="https://github.com/gerardrecinto">Gerard Recinto</a>. A personal lab project, not a product.</span><span><a href="https://github.com/gerardrecinto/entra-identity-governance">Source</a> &middot; <a href="https://github.com/gerardrecinto/entra-identity-governance/issues">Issues</a></span></div></footer>
+<script>
+document.querySelectorAll('.copy').forEach(function(b){b.addEventListener('click',function(){
+ var t=document.getElementById(b.getAttribute('data-for')).innerText;
+ (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){b.textContent='Copied';setTimeout(function(){b.textContent='Copy'},1500)},function(){b.textContent='Select + copy'});
+});});
+</script>
+</body></html>
